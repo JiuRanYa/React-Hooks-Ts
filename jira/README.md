@@ -51,10 +51,20 @@ npx mrm lint-staged
 
 pre-commit是指在commit之前运行lint-staged去进行格式化
 
+我们在lint-staged中增加匹配，因为我们是ts项目
+
+```
+"lint-staged": {
+    "*.{js,css,md,ts,tsx}": "prettier --write"
+}
+
+```
+
 ### 3.4 如果使用了ESlint，则进行这一步
 ```
 yarn add eslint-config-prettier -D
 ```
 
 ### 3.5 修改规则
+
 在package中修改eslintConfig新增prettier,表示覆盖eslint规则
