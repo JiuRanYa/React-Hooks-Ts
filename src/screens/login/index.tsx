@@ -23,8 +23,6 @@ export const LoginScren = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault()
 
-      console.log(event.currentTarget.elements)
-
       const username = (event.currentTarget.elements[0] as HTMLFormElement).value
       const password = (event.currentTarget.elements[1] as HTMLFormElement).value
 
