@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { loadDevTools } from 'jira-dev-tool'
 import { AppProvicers } from 'context'
+// 引入less文件
+import 'antd/dist/antd.less'
 
 loadDevTools(() => 
   ReactDOM.render(

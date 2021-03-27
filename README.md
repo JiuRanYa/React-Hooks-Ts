@@ -133,4 +133,37 @@ REACT_APP_API_URL = http://localhost:3001
 REACT_APP_API_URL = http://online.com
 ```
 
+## 7. 引入antd的less文件，并且覆盖默认样式的颜色
 
+### 7.1 引入craco
+```
+yarn add @craco/craco
+```
+
+### 7.2 在package.json文件中替换
+```
+"start": "craco start",
+"build": "craco build",
+"test": "craco test",
+```
+### 7.3 在根目录新建craco.config.js
+```js
+const CracoLessPlugin = require('craco-less');
+
+module.exports = {
+  plugins: [
+    {
+      plugin: CracoLessPlugin,
+      options: {
+        lessLoaderOptions: {
+          lessOptions: {
+            modifyVars: { '@primary-color': 'rgb(0, 82, 204)', '@font-size-base': '16px' },
+            javascriptEnabled: true,
+          },
+        },
+      },
+    },
+  ],
+};
+
+``
