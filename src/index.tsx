@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { loadDevTools } from 'jira-dev-tool'
+import { AppProvicers } from 'context'
 
 loadDevTools(() => 
   ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AppProvicers>
+      <App />
+    </AppProvicers>
   </React.StrictMode>,
   document.getElementById('root')
 ))
