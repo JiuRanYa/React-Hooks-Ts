@@ -4,10 +4,23 @@ import { PassThrough } from 'node:stream'
 import React, { ReactNode, useState } from 'react'
 import * as auth from 'context/context-provider/auth-provider'
 import { User } from 'screens/project-list/search-pannel'
+import { http } from 'utils/http'
+import { useMount } from 'utils'
 
 interface AutoForm {
   username: string,
   password: string
+}
+
+// 利用token发送请求，初始化user
+const bootstrapUser = async () => {
+  let user = null
+  const token = auth.getToken()
+  if (token) {
+    const data = await http('me', {token})
+    user = data.user
+  }
+  return user
 }
 
 // 1. 创建一个context
@@ -29,6 +42,10 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const login = (form: AutoForm) => auth.login(form).then(setUser) 
   const register = (form: AutoForm) => auth.register(form).then(setUser)
   const logout = () => auth.logout().then(() => setUser(null))
+
+  useMount(() => {
+    bootstrapUser().then(setUser)
+  })
 
   return <AuthContext.Provider children={children} value={{user, login, register, logout}}></AuthContext.Provider>
 }
