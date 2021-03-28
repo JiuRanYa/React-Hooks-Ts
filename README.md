@@ -166,4 +166,9 @@ module.exports = {
   ],
 };
 
-``
+```
+
+## 8.css in js 解决方案： Emotion
+```
+yarn add @emotion/react @emotion/styled
+```
