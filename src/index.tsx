@@ -1,22 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { loadDevTools } from 'jira-dev-tool'
-import { AppProvicers } from 'context'
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { loadServer, DevTools } from "jira-dev-tool";
+import { AppProvicers } from "context";
 // 引入less文件
-import 'antd/dist/antd.less'
+import "antd/dist/antd.less";
 
-loadDevTools(() => 
+loadServer(() =>
   ReactDOM.render(
-  <React.StrictMode>
-    <AppProvicers>
-      <App />
-    </AppProvicers>
-  </React.StrictMode>,
-  document.getElementById('root')
-))
-
+    <React.StrictMode>
+      <AppProvicers>
+        <DevTools />
+        <App />
+      </AppProvicers>
+    </React.StrictMode>,
+    document.getElementById("root")
+  )
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
