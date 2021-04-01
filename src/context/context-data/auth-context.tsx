@@ -4,6 +4,8 @@ import * as auth from "context/context-provider/auth-provider";
 import { User } from "screens/project-list/search-pannel";
 import { http } from "utils/http";
 import { useMount } from "utils";
+import { useAsync } from "utils/user-Async";
+import { FullScreenError, FullScreenLoading } from "components/lib";
 
 interface AutoForm {
   username: string;
@@ -37,7 +39,15 @@ AuthContext.displayName = "AuthContext";
 
 // 3. 自定义Provider提供的数据(这里只关注数据，方法和函数在auth-provider中书写)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const {
+    run,
+    data: user,
+    error,
+    isLoading,
+    isIdle,
+    isError,
+    setData: setUser,
+  } = useAsync<User | null>();
 
   // function programming point free: 消除相同参数
   const login = (form: AutoForm) => auth.login(form).then(setUser);
@@ -45,9 +55,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => auth.logout().then(() => setUser(null));
 
   useMount(() => {
-    bootstrapUser().then(setUser);
+    run(bootstrapUser());
   });
 
+  if (isIdle || isLoading) return <FullScreenLoading />;
+
+  if (isError) {
+    return <FullScreenError error={error}></FullScreenError>;
+  }
   return (
     <AuthContext.Provider
       children={children}
