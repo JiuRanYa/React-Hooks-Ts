@@ -68,3 +68,6 @@ export const useArray = <T>(val: T[]) => {
     add,
   };
 };
+
+// 刷新页面
+export const resetRoute = () => (window.location.href = window.location.origin);

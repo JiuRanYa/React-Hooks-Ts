@@ -7,13 +7,16 @@ import styled from "@emotion/styled";
 import { Typography } from "antd";
 import { useProjects } from "utils/http-type/project";
 import { useUsers } from "utils/http-type/users";
+import { useUrlQueryParam } from "../../utils/url";
 
 export const ProjectListScreen = () => {
   // 参数
-  const [param, setParam] = useState({
+  const [, setParam] = useState({
     name: "",
     personId: "",
   });
+  const [keys] = useState<("name" | "personId")[]>(["name", "personId"]);
+  const [param] = useUrlQueryParam(keys);
   // set debounce: 200ms
   const debounceParam = useDebounce(param, 200);
   // projects
@@ -32,6 +35,8 @@ export const ProjectListScreen = () => {
     </Container>
   );
 };
+
+ProjectListScreen.whyDidYouRender = true;
 
 const Container = styled.div`
   padding: 3.2rem;

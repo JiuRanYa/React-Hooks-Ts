@@ -210,3 +210,25 @@ yarn add @emotion/react @emotion/styled
 ```
 yarn add dayjs
 ```
+
+## 10. 路由处理react-router@6.x.x
+
+```
+yarn add react-router@6 react-router-dom@6 history
+```
+
+## 11. 无线循环库：why-did-you-render
+
+```
+yarn add @welldone-software/why-did-you-render
+```
+
+### 11.1 在 src 下新建 wdyr.ts
+
+### 11.2 在 index.tsx 下引入 wdyr.ts,并且改配置为 false(默认为跟踪全部组件)
+
+### 11.3 如果想要跟踪某个组件，则输入下面的配置信息
+
+```
+ProjectListScreen.whyDidYouRender = true
+```
