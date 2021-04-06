@@ -1,4 +1,4 @@
-import { User } from "screens/project-list/search-pannel";
+import { User } from "screens/project-list/search-panel";
 import { useAsync } from "utils/user-Async";
 import { useEffect } from "react";
 import { cleanObject } from "utils";

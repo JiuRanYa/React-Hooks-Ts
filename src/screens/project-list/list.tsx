@@ -1,5 +1,5 @@
 import React from "react";
-import { User } from "screens/project-list/search-pannel";
+import { User } from "screens/project-list/search-panel";
 import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 export interface Project {
   id: number;
   name: string;
-  personId: string;
+  personId: number;
   organization: string;
   created: number;
   pin: boolean;
