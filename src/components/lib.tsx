@@ -40,6 +40,6 @@ export const FullScreenLoading = () => (
 export const FullScreenError = ({ error }: { error: Error | null }) => (
   <FullPage>
     <DevTools />
-    <Typography.Text type={"danger"}>{error?.message + "tsa"}</Typography.Text>
+    <Typography.Text type={"danger"}>{error?.message}</Typography.Text>
   </FullPage>
 );

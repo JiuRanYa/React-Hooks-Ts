@@ -1,5 +1,5 @@
 // 提供一个全局的context和Custom hook 供全局使用
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import * as auth from "context/context-provider/auth-provider";
 import { User } from "screens/project-list/search-panel";
 import { http } from "utils/http";
@@ -7,7 +7,7 @@ import { useMount } from "utils";
 import { useAsync } from "utils/user-Async";
 import { FullScreenError, FullScreenLoading } from "components/lib";
 
-interface AutoForm {
+interface AuthForm {
   username: string;
   password: string;
 }
@@ -27,14 +27,14 @@ const bootstrapUser = async () => {
 const AuthContext = React.createContext<
   | {
       user: User | null;
-      login: (form: AutoForm) => Promise<void>;
-      register: (form: AutoForm) => Promise<void>;
+      login: (form: AuthForm) => Promise<void>;
+      register: (form: AuthForm) => Promise<void>;
       logout: () => Promise<void>;
     }
   | undefined
 >(undefined);
 
-// 2. 设置dev-tools中的displayname
+// 2. 设置dev-tools中的displayName
 AuthContext.displayName = "AuthContext";
 
 // 3. 自定义Provider提供的数据(这里只关注数据，方法和函数在auth-provider中书写)
@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   } = useAsync<User | null>();
 
   // function programming point free: 消除相同参数
-  const login = (form: AutoForm) => auth.login(form).then(setUser);
-  const register = (form: AutoForm) => auth.register(form).then(setUser);
+  const login = (form: AuthForm) => auth.login(form).then(setUser);
+  const register = (form: AuthForm) => auth.register(form).then(setUser);
   const logout = () => auth.logout().then(() => setUser(null));
 
   useMount(() => {

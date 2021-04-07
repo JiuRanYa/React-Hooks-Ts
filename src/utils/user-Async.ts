@@ -40,11 +40,22 @@ export const useAsync = <D>(
       stat: "error",
     });
 
+  // 存储上个run(promise)，在调用reloading的时候重新执行上一个run(promise)
+  const [reloading, setReloading] = useState(() => () => {});
+
   // 用来触发异步请求
-  const run = (promise: Promise<D>) => {
+  const run = (
+    promise: Promise<D>,
+    runConfig?: { reloading: () => Promise<D> }
+  ) => {
     if (!promise || !promise.then) {
       throw new TypeError("请传入Promise类型");
     }
+    setReloading(() => () => {
+      if (runConfig?.reloading) {
+        run(runConfig.reloading(), runConfig);
+      }
+    });
     setState({ ...state, stat: "loading" });
     return promise
       .then((data) => {
@@ -63,6 +74,7 @@ export const useAsync = <D>(
     setData,
     setError,
     run,
+    reloading,
     isIdle: state.stat === "idle",
     isSuccess: state.stat === "success",
     isError: state.stat === "error",

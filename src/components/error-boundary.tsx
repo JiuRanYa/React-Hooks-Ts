@@ -1,7 +1,7 @@
 import React from "react";
 
 // props, state
-// props children fallbackder
+// props children fallbackRender
 
 type FallbackRender = (props: { error: Error | null }) => React.ReactElement;
 

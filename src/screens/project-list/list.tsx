@@ -3,6 +3,8 @@ import { User } from "screens/project-list/search-panel";
 import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { Pin } from "../../components/pin";
+import { useEditProject } from "../../utils/http-type/project";
 
 export interface Project {
   id: number;
@@ -15,13 +17,29 @@ export interface Project {
 
 interface ListProps extends TableProps<Project> {
   users: User[];
+  reloading?: () => void;
 }
 
 export const List = ({ users, ...props }: ListProps) => {
+  const { mutate } = useEditProject();
+  // 先接受Project.id, 然后需要pin, 使用函数柯里化进行编程
+  const pinProject = (id: number) => (pin: boolean) =>
+    mutate({ id, pin }).then(props.reloading);
   return (
     <Table
       pagination={false}
       columns={[
+        {
+          title: <Pin checked={true} disabled={true} />,
+          render(value, project) {
+            return (
+              <Pin
+                checked={project.pin}
+                onCheckedChange={pinProject(project.id)}
+              />
+            );
+          },
+        },
         {
           title: "名称",
           sorter: (a, b) => a.name.localeCompare(b.name),

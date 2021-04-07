@@ -12,7 +12,9 @@ export const ProjectListScreen = () => {
   // 参数
   const [param, setParam] = useProjectsSearchParams();
   // projects
-  let { isLoading, error, data: list } = useProjects(useDebounce(param, 200));
+  let { isLoading, error, data: list, reloading } = useProjects(
+    useDebounce(param, 200)
+  );
   // users
   let { data: users } = useUsers();
 
@@ -23,7 +25,12 @@ export const ProjectListScreen = () => {
       {error ? (
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
-      <List loading={isLoading} dataSource={list || []} users={users || []} />
+      <List
+        reloading={reloading}
+        loading={isLoading}
+        dataSource={list || []}
+        users={users || []}
+      />
     </Container>
   );
 };
