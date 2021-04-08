@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { Row } from "components/lib";
 import { Button, Dropdown, Menu } from "antd";
@@ -8,15 +8,29 @@ import { ProjectListScreen } from "screens/project-list";
 import { useAuth } from "context/context-data/auth-context";
 import { ProjectScreen } from "./screens/project";
 import { resetRoute } from "utils";
+import { ProjectModal } from "./screens/project-list/project-modal";
+import { ProjectPopover } from "./components/project-popover";
 
+/*
+ * 我们这里使用状态提升定义了一个公共的prop, 并把它层层传递给了子组件，
+ * 缺点一: state definition is far away the place where usage 高耦合
+ * 缺点二: 我们这里使用状态提升定义了一个公共的prop, 并把它层层传递给了子组件，(下钻)
+ * */
 export const AuthenticatedApp = () => {
+  // 记录Drawer打开
+  const [projectModalOpen, setProjectModal] = useState(false);
   return (
     <Container>
-      <PageHeader />
+      <PageHeader setProjectModalOpen={setProjectModal} />
       <Main>
         <Router>
           <Routes>
-            <Route path={"/projects"} element={<ProjectListScreen />} />
+            <Route
+              path={"/projects"}
+              element={
+                <ProjectListScreen setProjectModalOpen={setProjectModal} />
+              }
+            />
             <Route
               path={"/projects/:projectId/*"}
               element={<ProjectScreen />}
@@ -25,41 +39,55 @@ export const AuthenticatedApp = () => {
           </Routes>
         </Router>
       </Main>
+      <ProjectModal
+        projectModelOpen={projectModalOpen}
+        onClose={() => setProjectModal(false)}
+      ></ProjectModal>
     </Container>
   );
 };
 
-const PageHeader = () => {
-  const { logout, user } = useAuth();
+const PageHeader = (props: {
+  setProjectModalOpen: (isOpen: boolean) => void;
+}) => {
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
-        <Button type={"link"} onClick={resetRoute}>
+        <Button style={{ padding: 0 }} type={"link"} onClick={resetRoute}>
           logo
         </Button>
-        <h2>项目</h2>
-        <h2>用户</h2>
+        <ProjectPopover setProjectModalOpen={props.setProjectModalOpen} />
+        <span>用户</span>
       </HeaderLeft>
       <HeaderRight>
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item key={"layout"}>
-                <Button type={"link"} onClick={logout}>
-                  注销
-                </Button>
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button type={"link"} onClick={(e) => e.preventDefault()}>
-            Hi, {user?.name}
-          </Button>
-        </Dropdown>
+        <User />
       </HeaderRight>
     </Header>
   );
 };
+
+const User = () => {
+  const { logout, user } = useAuth();
+
+  return (
+    <Dropdown
+      overlay={
+        <Menu>
+          <Menu.Item key={"layout"}>
+            <Button type={"link"} onClick={logout}>
+              注销
+            </Button>
+          </Menu.Item>
+        </Menu>
+      }
+    >
+      <Button type={"link"} onClick={(e) => e.preventDefault()}>
+        Hi, {user?.name}
+      </Button>
+    </Dropdown>
+  );
+};
+
 const Container = styled.div`
   display: grid;
   grid-template-rows: 6rem 1fr 6rem;

@@ -25,3 +25,5 @@ reloading: () => client(firstFetchProjects)
 ```
 调用了reloading中保存的加载Projects的run(Promise)
 ```
+
+# 二. 如何解决 prop drilling 问题, 合理使用 Composition Component
