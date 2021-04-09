@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 
 interface State<D> {
   error: Error | null;
@@ -21,24 +21,33 @@ export const useAsync = <D>(
   initialConfig?: typeof defaultConfig
 ) => {
   const config = { ...defaultConfig, ...initialConfig };
-  const [state, setState] = useState<State<D>>({
-    ...defaultInitialState,
-    ...initialState,
-  });
+  const [state, dispatch] = useReducer(
+    (state: State<D>, action: Partial<State<D>>) => ({ ...state, ...action }),
+    {
+      ...defaultInitialState,
+      ...initialState,
+    }
+  );
 
-  const setData = (data: D) =>
-    setState({
-      data,
-      stat: "success",
-      error: null,
-    });
+  const setData = useCallback(
+    (data: D) =>
+      dispatch({
+        data,
+        stat: "success",
+        error: null,
+      }),
+    []
+  );
 
-  const setError = (error: Error) =>
-    setState({
-      data: null,
-      error,
-      stat: "error",
-    });
+  const setError = useCallback(
+    (error: Error) =>
+      dispatch({
+        data: null,
+        error,
+        stat: "error",
+      }),
+    []
+  );
 
   // 存储上个run(promise)，在调用reloading的时候重新执行上一个run(promise)
   const [reloading, setReloading] = useState(() => () => {});
@@ -56,7 +65,7 @@ export const useAsync = <D>(
         run(runConfig.reloading(), runConfig);
       }
     });
-    setState({ ...state, stat: "loading" });
+    dispatch({ ...state, stat: "loading" });
     return promise
       .then((data) => {
         setData(data);

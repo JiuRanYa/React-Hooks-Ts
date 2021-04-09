@@ -1,8 +1,7 @@
 import React from "react";
-import { Button, Divider, List, Popover, Typography } from "antd";
+import { Divider, List, Popover, Typography } from "antd";
 import { useProjects } from "../utils/http-type/project";
 import styled from "@emotion/styled";
-import { ButtonNoPadding } from "./lib";
 
 export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
   const { data: projects, isLoading } = useProjects();

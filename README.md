@@ -232,3 +232,9 @@ yarn add @welldone-software/why-did-you-render
 ```
 ProjectListScreen.whyDidYouRender = true
 ```
+
+### 12. redux-toolkit
+
+```
+yarn add react-redux @reduxjs/toolkit
+```
