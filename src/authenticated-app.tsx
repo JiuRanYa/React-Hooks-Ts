@@ -17,60 +17,39 @@ import { ProjectPopover } from "./components/project-popover";
  * 缺点二: 我们这里使用状态提升定义了一个公共的prop, 并把它层层传递给了子组件，(下钻)
  * */
 export const AuthenticatedApp = () => {
-  // 记录Drawer打开
-  const [projectModalOpen, setProjectModal] = useState(false);
   // 把project
   const projectButton = (
-    <ButtonNoPadding onClick={() => setProjectModal(true)} type={"link"}>
-      创建项目
-    </ButtonNoPadding>
+    <ButtonNoPadding type={"link"}>创建项目</ButtonNoPadding>
   );
 
   return (
     <Container>
-      <PageHeader projectButton={projectButton} />
-      <Main>
-        <Router>
+      <Router>
+        <PageHeader />
+        <Main>
           <Routes>
-            <Route
-              path={"/projects"}
-              element={
-                <ProjectListScreen
-                  projectButton={
-                    <ButtonNoPadding
-                      onClick={() => setProjectModal(true)}
-                      type={"link"}
-                    >
-                      创建项目
-                    </ButtonNoPadding>
-                  }
-                />
-              }
-            />
+            <Route path={"/projects"} element={<ProjectListScreen />} />
             <Route
               path={"/projects/:projectId/*"}
               element={<ProjectScreen />}
             />
             <Navigate to={"/projects"} />
           </Routes>
-        </Router>
-      </Main>
-      <ProjectModal
-        projectModelOpen={projectModalOpen}
-        onClose={() => setProjectModal(false)}
-      ></ProjectModal>
+        </Main>
+        <ProjectModal />
+      </Router>
     </Container>
   );
 };
 
-const PageHeader = (props: { projectButton: JSX.Element }) => {
+const PageHeader = () => {
   return (
     <Header between={true}>
       <HeaderLeft gap={true}>
         <Button style={{ padding: 0 }} type={"link"} onClick={resetRoute}>
           logo
         </Button>
-        <ProjectPopover {...props} />
+        <ProjectPopover />
         <span>用户</span>
       </HeaderLeft>
       <HeaderRight>
