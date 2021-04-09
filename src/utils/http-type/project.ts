@@ -3,28 +3,33 @@ import { useAsync } from "utils/user-Async";
 import { useEffect } from "react";
 import { cleanObject } from "utils";
 import { useHttp } from "utils/http";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 export const useProjects = (param?: Partial<Project>) => {
-  const { run, ...result } = useAsync<Project[]>();
   const client = useHttp();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchProjects = () =>
-    client("projects", { data: cleanObject((param = {})) });
-
-  // 依赖为param，当param变化时调用
-  useEffect(() => {
-    run(fetchProjects(), { reloading: fetchProjects });
-  }, [param]);
-
-  return result;
+  return useQuery<Project[], Error>(["projects", param], () =>
+    client("projects", { data: param })
+  );
 };
 
 // 注意: hook 只能在函数顶层使用
 export const useEditProject = () => {
-  const { run, ...asyncResult } = useAsync();
+  // const { run, ...asyncResult } = useAsync();
   const client = useHttp();
+  const queryClient = useQueryClient();
 
+  return useMutation(
+    (params: Partial<Project>) =>
+      client(`projects/${params.id}`, {
+        method: "PATCH",
+        data: params,
+      }),
+    {
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
+  /*
   const mutate = (params: Partial<Project>) => {
     return run(
       client(`projects/${params.id}`, {
@@ -37,14 +42,26 @@ export const useEditProject = () => {
   return {
     mutate,
     ...asyncResult,
-  };
+  };*/
 };
 
 export const useAddProject = () => {
-  const { run, ...asyncResult } = useAsync();
+  //const { run, ...asyncResult } = useAsync();
   const client = useHttp();
+  const queryClient = useQueryClient();
 
-  const mutate = (params: Partial<Project>) => {
+  return useMutation(
+    (params: Partial<Project>) =>
+      client(`projects/${params.id}`, {
+        data: params,
+        method: "POST",
+      }),
+    {
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
+
+  /*const mutate = (params: Partial<Project>) => {
     run(
       client(`projects/${params.id}`, {
         data: params,
@@ -56,5 +73,5 @@ export const useAddProject = () => {
   return {
     mutate,
     ...asyncResult,
-  };
+  };*/
 };

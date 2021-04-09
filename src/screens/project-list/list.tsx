@@ -20,14 +20,12 @@ export interface Project {
 
 interface ListProps extends TableProps<Project> {
   users: User[];
-  reloading?: () => void;
 }
 
 export const List = ({ users, ...props }: ListProps) => {
   const { mutate } = useEditProject();
   // 先接受Project.id, 然后需要pin, 使用函数柯里化进行编程
-  const pinProject = (id: number) => (pin: boolean) =>
-    mutate({ id, pin }).then(props.reloading);
+  const pinProject = (id: number) => (pin: boolean) => mutate({ id, pin });
 
   const dispatch = useDispatch();
   return (
@@ -95,6 +93,7 @@ export const List = ({ users, ...props }: ListProps) => {
                         编辑
                       </ButtonNoPadding>
                     </Menu.Item>
+                    <Menu.Item key={"delete"}>删除</Menu.Item>
                   </Menu>
                 }
               >

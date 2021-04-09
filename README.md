@@ -240,3 +240,9 @@ yarn add react-redux @reduxjs/toolkit
 ```
 
 ### 13. immutable state library : Immer
+
+### 14. React-query 缓存更新数据库
+
+```
+
+```

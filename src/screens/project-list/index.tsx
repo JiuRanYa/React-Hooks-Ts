@@ -17,9 +17,7 @@ export const ProjectListScreen = () => {
   // dispatch
   const dispatch = useDispatch();
   // projects
-  let { isLoading, error, data: list, reloading } = useProjects(
-    useDebounce(param, 200)
-  );
+  let { isLoading, error, data: list } = useProjects(useDebounce(param, 200));
   // users
   let { data: users } = useUsers();
   return (
@@ -37,12 +35,7 @@ export const ProjectListScreen = () => {
       {error ? (
         <Typography.Text type={"danger"}>{error.message}</Typography.Text>
       ) : null}
-      <List
-        reloading={reloading}
-        loading={isLoading}
-        dataSource={list || []}
-        users={users || []}
-      />
+      <List loading={isLoading} dataSource={list || []} users={users || []} />
     </Container>
   );
 };
