@@ -1,19 +1,22 @@
 // 提供一个全局的context和Custom hook 供全局使用
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback } from "react";
 import * as auth from "context/context-provider/auth-provider";
 import { User } from "screens/project-list/search-panel";
 import { http } from "utils/http";
 import { useMount } from "utils";
 import { useAsync } from "utils/user-Async";
 import { FullScreenError, FullScreenLoading } from "components/lib";
+import * as authStore from "store/auth.slice";
+import { useDispatch, useSelector } from "react-redux";
+import { bootstrap, selectUser } from "store/auth.slice";
 
-interface AuthForm {
+export interface AuthForm {
   username: string;
   password: string;
 }
 
 // 利用token发送请求，初始化user
-const bootstrapUser = async () => {
+export const bootstrapUser = async () => {
   let user = null;
   const token = auth.getToken();
   if (token) {
@@ -23,39 +26,13 @@ const bootstrapUser = async () => {
   return user;
 };
 
-// 1. 创建一个context
-const AuthContext = React.createContext<
-  | {
-      user: User | null;
-      login: (form: AuthForm) => Promise<void>;
-      register: (form: AuthForm) => Promise<void>;
-      logout: () => Promise<void>;
-    }
-  | undefined
->(undefined);
-
-// 2. 设置dev-tools中的displayName
-AuthContext.displayName = "AuthContext";
-
-// 3. 自定义Provider提供的数据(这里只关注数据，方法和函数在auth-provider中书写)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const {
-    run,
-    data: user,
-    error,
-    isLoading,
-    isIdle,
-    isError,
-    setData: setUser,
-  } = useAsync<User | null>();
+  const { run, error, isLoading, isIdle, isError } = useAsync<User | null>();
 
-  // function programming point free: 消除相同参数
-  const login = (form: AuthForm) => auth.login(form).then(setUser);
-  const register = (form: AuthForm) => auth.register(form).then(setUser);
-  const logout = () => auth.logout().then(() => setUser(null));
+  const dispatch: (...args: unknown[]) => Promise<User> = useDispatch();
 
   useMount(() => {
-    run(bootstrapUser());
+    run(dispatch(bootstrap()));
   });
 
   if (isIdle || isLoading) return <FullScreenLoading />;
@@ -63,19 +40,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   if (isError) {
     return <FullScreenError error={error}></FullScreenError>;
   }
-  return (
-    <AuthContext.Provider
-      children={children}
-      value={{ user, login, register, logout }}
-    ></AuthContext.Provider>
-  );
+  return <div>{children}</div>;
 };
 
 // 4. 暴露一个useAuth全局的Custom hook
 export const useAuth = () => {
-  const context = React.useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth必须在AutoProvider中使用");
-  }
-  return context;
+  const dispatch: (...args: unknown[]) => Promise<User> = useDispatch();
+
+  const user = useSelector(selectUser);
+  const login = useCallback(
+    (form: AuthForm) => dispatch(authStore.login(form)),
+    [dispatch]
+  );
+  const register = useCallback(
+    (form: AuthForm) => dispatch(authStore.register(form)),
+    [dispatch]
+  );
+  const logout = useCallback(() => dispatch(authStore.logout()), [dispatch]);
+
+  return {
+    user,
+    login,
+    logout,
+    register,
+  };
 };

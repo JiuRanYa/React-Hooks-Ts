@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { Pin } from "../../components/pin";
 import { useEditProject } from "../../utils/http-type/project";
 import { ButtonNoPadding } from "../../components/lib";
+import { projectListActions } from "./project-list-slice";
+import { useDispatch } from "react-redux";
 
 export interface Project {
   id: number;
@@ -19,7 +21,6 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
   users: User[];
   reloading?: () => void;
-  projectButton: JSX.Element;
 }
 
 export const List = ({ users, ...props }: ListProps) => {
@@ -27,6 +28,8 @@ export const List = ({ users, ...props }: ListProps) => {
   // 先接受Project.id, 然后需要pin, 使用函数柯里化进行编程
   const pinProject = (id: number) => (pin: boolean) =>
     mutate({ id, pin }).then(props.reloading);
+
+  const dispatch = useDispatch();
   return (
     <Table
       pagination={false}
@@ -82,7 +85,16 @@ export const List = ({ users, ...props }: ListProps) => {
               <Dropdown
                 overlay={
                   <Menu>
-                    <Menu.Item key={"edit"}>{props.projectButton}</Menu.Item>
+                    <Menu.Item key={"edit"}>
+                      <ButtonNoPadding
+                        onClick={() =>
+                          dispatch(projectListActions.openProjectModal())
+                        }
+                        type={"link"}
+                      >
+                        编辑
+                      </ButtonNoPadding>
+                    </Menu.Item>
                   </Menu>
                 }
               >
